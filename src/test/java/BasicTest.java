@@ -39,6 +39,8 @@ public class BasicTest {
         page.getByPlaceholder("Email").fill("rahulshetty1@yahoo.com");
         page.getByLabel("Password").fill("Magiclife1!");
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Sign In")).click();
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Browse Events").setExact(true)).click();
+        assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/events");
 
     }
 
