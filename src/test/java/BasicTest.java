@@ -41,6 +41,20 @@ public class BasicTest {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Sign In")).click();
         page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Browse Events").setExact(true)).click();
         assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/events");
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add New Event").setExact(true)).click();
+        assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/admin/events");
+        page.getByTestId("event-title-input").fill("My Event");
+        assertThat(page.getByTestId("event-title-input")).hasValue("My Event");
+        page.getByPlaceholder("Describe the event").fill("Description of my great event");
+        assertThat(page.getByPlaceholder("Describe the event")).hasValue("Description of my great event");
+        page.getByLabel("Category").selectOption("Sports");
+        assertThat(page.getByLabel("Category")).hasValue("Sports");
+        page.getByLabel("City").fill("Warsaw");
+        page.getByLabel("Venue").fill("Pl. Defilad 1, 00-901 Warszawa");
+        assertThat(page.getByLabel("City")).hasValue("Warsaw");
+
+
+
 
     }
 
