@@ -1,7 +1,4 @@
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -36,8 +33,8 @@ public class BasicTest {
         assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/events");
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add New Event").setExact(true)).click();
         assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/admin/events");
-        page.getByTestId("event-title-input").fill("My Event");
-        page.getByPlaceholder("Describe the event").fill("Description of my great event");
+        page.getByTestId("event-title-input").fill("QA Summit - Test Event");
+        page.getByPlaceholder("Describe the event").fill("Description of great QA summit event");
         page.getByLabel("Category").selectOption("Sports");
         page.getByLabel("City").fill("Warsaw");
         page.getByLabel("Venue").fill("Pl. Defilad 1, 00-901 Warszawa");
@@ -45,6 +42,13 @@ public class BasicTest {
         page.getByLabel("Price ($)").fill("300");
         page.getByLabel("Total Seats").fill("2000");
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add Event")).click();
+        assertThat(page.getByText("Event created!")).isVisible();
+
+        page.locator("#nav-events").click();
+        Locator eventCards = page.getByTestId("event-card");
+        assertThat(eventCards).hasCount(8);
+        Locator targetEvent = eventCards.filter(new Locator.FilterOptions().setHasText("QA Summit - Test Event"));
+        assertThat(targetEvent).isVisible();
     }
 
     @AfterMethod
