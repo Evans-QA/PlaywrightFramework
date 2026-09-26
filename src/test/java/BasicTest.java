@@ -63,8 +63,18 @@ public class BasicTest {
         page.getByPlaceholder("+91 98765 43210").fill("+48 123 456 789");
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirm Booking")).click();
         assertThat(page.getByText("Booking Confirmed!")).isVisible();
+
+        String bookingRef = page.locator(".booking-ref").innerText();
+
+        page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("View My Bookings")).click();
+        Locator bookingCards = page.getByTestId("booking-card");
+        Locator targetBooking = bookingCards.filter(new Locator.FilterOptions().setHasText(bookingRef));
+        assertThat(targetBooking).isVisible();
+
         page.navigate("https://eventhub.rahulshettyacademy.com/events");
-        String seatsTextAfter = targetEvent.getByText("seats").innerText();
+        Locator eventCardsAfter = page.getByTestId("event-card");
+        Locator targetEventAfter = eventCardsAfter.filter(new Locator.FilterOptions().setHasText("QA Summit - Test Event"));
+        String seatsTextAfter = targetEventAfter.getByText("seats").innerText();
         System.out.println(seatsTextAfter);
     }
 
