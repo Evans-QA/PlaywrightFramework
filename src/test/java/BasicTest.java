@@ -1,4 +1,5 @@
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import com.microsoft.playwright.options.AriaRole;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -18,6 +19,14 @@ public class BasicTest {
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
         page = browser.newPage();
 
+
+
+        //Actions takes 10 seconds (default)
+        page.setDefaultTimeout(8000);
+
+        //Assertions takes 5 seconds (default)
+        PlaywrightAssertions.setDefaultAssertionTimeout(7000);
+
     }
 
     @Test
@@ -33,7 +42,7 @@ public class BasicTest {
         assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/events");
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add New Event").setExact(true)).click();
         assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/admin/events");
-        page.getByTestId("event-title-input").fill("QA Summit - Test Event");
+        page.getByTestId("event-title-input").fill("QA Summit - Test Event", new Locator.FillOptions().setTimeout(10000));
         page.getByPlaceholder("Describe the event").fill("Description of great QA summit event");
         page.getByLabel("Category").selectOption("Sports");
         page.getByLabel("City").fill("Warsaw");
@@ -41,7 +50,7 @@ public class BasicTest {
         page.getByLabel("Event Date & Time").fill("2027-01-05T10:50");
         page.getByLabel("Price ($)").fill("300");
         page.getByLabel("Total Seats").fill("2000");
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add Event")).click();
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Add Event")).click(new Locator.ClickOptions().setTimeout(12000));
         assertThat(page.getByText("Event created!")).isVisible();
 
         page.locator("#nav-events").click();
