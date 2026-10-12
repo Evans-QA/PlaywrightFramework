@@ -1,6 +1,9 @@
 import com.microsoft.playwright.*;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.nio.file.Paths;
 
 public class UIValidationTest {
 
@@ -16,8 +19,21 @@ BrowserContext context;
         playwright = Playwright.create();
         browser = playwright.chromium().launch();
         context = browser.newContext();
+
+        context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true)
+                .setSources(true));
+
+
         page = context.newPage();
         page.navigate("https://rahulshettyacademy.com/loginpagePractise/");
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        context.tracing().stop(new Tracing.StopOptions()
+                .setPath(Paths.get("trace.zip")));
     }
 
     @Test
