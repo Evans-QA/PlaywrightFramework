@@ -4,6 +4,9 @@ import com.microsoft.playwright.options.AriaRole;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.nio.file.Paths;
+
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class BasicTest {
@@ -11,6 +14,7 @@ public class BasicTest {
     Playwright playwright;
     Browser browser;
     Page page;
+    BrowserContext context;
 
     @BeforeMethod
     public void setUp() {
@@ -18,6 +22,14 @@ public class BasicTest {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
         page = browser.newPage();
+        context = browser.newContext();
+
+        context.tracing().start(new Tracing.StartOptions()
+                .setScreenshots(true)
+                .setSnapshots(true)
+                .setSources(true));
+
+        page = context.newPage();
 
         //Actions takes 10 seconds (default)
         page.setDefaultTimeout(18000);
@@ -57,7 +69,7 @@ public class BasicTest {
         String seatsTextBefore = targetEvent.getByText("seats").innerText();
         System.out.println(seatsTextBefore);
         targetEvent.getByTestId("book-now-btn").click();
-        assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/events/7887");
+        assertThat(page).hasURL("https://eventhub.rahulshettyacademy.com/events/18067");
         page.getByPlaceholder("Your full name").fill("John Test");
         page.getByPlaceholder("you@email.com").fill("johntest@gmail.com");
         page.getByPlaceholder("+91 98765 43210").fill("+48 123 456 789");
@@ -80,6 +92,8 @@ public class BasicTest {
 
     @AfterMethod
     public void tearDown() {
+        context.tracing().stop(new Tracing.StopOptions()
+                .setPath(Paths.get("traceBT.zip")));
         browser.close();
         playwright.close();
     }
