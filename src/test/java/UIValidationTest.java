@@ -1,9 +1,12 @@
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.AriaRole;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.nio.file.Paths;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class UIValidationTest {
 
@@ -47,5 +50,13 @@ BrowserContext context;
        String emailId = childText.split("at ")[1].split(" ")[0];
        System.out.println(emailId);
 
+    }
+
+       @Test
+       public void UIControls() {
+
+        Locator radioButton = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("User"));
+        radioButton.click();
+        assertThat(radioButton).isChecked();
     }
 }
