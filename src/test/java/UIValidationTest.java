@@ -1,5 +1,6 @@
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -20,7 +21,8 @@ BrowserContext context;
     public void setUp() {
 
         playwright = Playwright.create();
-        browser = playwright.chromium().launch();
+        //browser = playwright.chromium().launch();
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
         context = browser.newContext();
 
         context.tracing().start(new Tracing.StartOptions()
@@ -57,6 +59,20 @@ BrowserContext context;
 
         Locator radioButton = page.getByRole(AriaRole.RADIO, new Page.GetByRoleOptions().setName("User"));
         radioButton.click();
-        assertThat(radioButton).isChecked();
+
+        Locator okayButton = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Okay"));
+        okayButton.click();
+
+        Assert.assertTrue(radioButton.isChecked());
+
+        Locator checkboxTerms = page.getByRole(AriaRole.CHECKBOX, new Page.GetByRoleOptions().setName("I Agree to the terms and conditions"));
+        checkboxTerms.click();
+        Assert.assertTrue(checkboxTerms.isChecked());
+
+        Locator dropdownSelection = page.getByRole(AriaRole.COMBOBOX);
+        dropdownSelection.selectOption("Teacher");
+
+        page.waitForTimeout(3000);
+
     }
 }
